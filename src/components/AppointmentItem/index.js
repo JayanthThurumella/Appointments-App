@@ -1,8 +1,11 @@
+import {format} from 'date-fns'
 import './index.css'
 
 const AppointmentItem = props => {
-  const {Appointment, starChange} = props
-  const {id, title, date, important} = Appointment
+  const {appointment, starChange} = props
+  const {id, title, date, important} = appointment
+
+  const dateFormat = format(new Date(date.date), 'dd MMMM yyyy, EEEE')
 
   const changingImportance = () => {
     starChange(id)
@@ -20,10 +23,17 @@ const AppointmentItem = props => {
   return (
     <li className="appointment-container">
       <div className="title-container">
-        <h1 className="title">{title}</h1>
-        <img src={starImg} onClick={changingImportance} alt="star-img" />
+        <p className="title">{title.title}</p>
+        <button type="submit" data-testid="star" className="star">
+          <img
+            src={starImg}
+            className="star"
+            onClick={changingImportance}
+            alt="star"
+          />
+        </button>
       </div>
-      <p className="date">{date}</p>
+      <p className="date">{dateFormat}</p>
     </li>
   )
 }

@@ -4,7 +4,13 @@ import {Component} from 'react'
 import AppointmentItem from '../AppointmentItem'
 
 class Appointments extends Component {
-  state = {appointmentsList: [], title: '', date: ''}
+  state = {
+    appointmentsList: [],
+    title: '',
+    date: '',
+    starred: false,
+    allAppointments: [],
+  }
 
   addTitle = event => {
     this.setState({title: event.target.value})
@@ -26,7 +32,7 @@ class Appointments extends Component {
     }
 
     this.setState(prevState => ({
-      appointmentsList: [...prevState.appointmentList, newAppointment],
+      appointmentsList: [...prevState.appointmentsList, newAppointment],
       title: '',
       date: '',
     }))
@@ -40,23 +46,34 @@ class Appointments extends Component {
       }
       return each
     })
-    this.setState({appointmentList: changedAppointments})
+    this.setState({appointmentsList: changedAppointments})
   }
 
   starredAppointmentsList = () => {
-    const {appointmentList} = this.state
+    const {appointmentsList, starred, allAppointments} = this.state
 
-    const filterAppointmentList = appointmentList.filter(
-      each => each.important === true,
-    )
+    if (!starred) {
+      const filterAppointmentList = appointmentsList.filter(
+        each => each.important === true,
+      )
 
-    this.setState = {appointmentList: filterAppointmentList}
+      this.setState({
+        allAppointments: appointmentsList,
+        appointmentsList: filterAppointmentList,
+        starred: true,
+      })
+    } else {
+      this.setState({
+        appointmentsList: allAppointments,
+        starred: false,
+      })
+    }
   }
 
   render() {
-    const {appointmentsList, title, date} = this.state
-    console.log(title)
-    console.log(date)
+    const {appointmentsList, title, date, starred} = this.state
+
+    const starButtonClass = starred ? 'button-on' : ''
 
     return (
       <div className="main-container">
@@ -79,7 +96,9 @@ class Appointments extends Component {
                   value={date}
                   onChange={this.addDate}
                 />
-                <button type="submit">Add</button>
+                <button className="add-button" type="submit">
+                  Add
+                </button>
               </form>
             </div>
             <img
@@ -94,7 +113,7 @@ class Appointments extends Component {
               <button
                 type="submit"
                 onClick={this.starredAppointmentsList}
-                className="starred-button "
+                className={`starred-button ${starButtonClass}`}
               >
                 Starred
               </button>
@@ -102,7 +121,7 @@ class Appointments extends Component {
             <ul className="appointments">
               {appointmentsList.map(eachAppointment => (
                 <AppointmentItem
-                  Appointment={eachAppointment}
+                  appointment={eachAppointment}
                   starChange={this.starChange}
                   key={eachAppointment.id}
                 />
